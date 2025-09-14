@@ -9,9 +9,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="icon" href="img/logo.png">
+    <script src="js/index.js"></script>
     <title>АКИБ - Главная</title>
 </head>
 <body>
+    <div class="login-layer" id="login-layer" style="display: none;">
+        <div class="form-container" id="login-form">
+            <button class="close-btn" onclick="show_hide('login-layer')">Закрыть</button>
+            <div class="logo">
+                <h1>АКИБ</h1>
+                <p>Аутсорсинговая компания по информационной безопасности</p>
+            </div>
+            
+            <form name="login-form" action="https://httpbin.org/post" method="POST" accept-charset="utf-8">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" name="username" required placeholder="Введите ваш логин">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="Введите ваш пароль">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Запомнить меня</label>
+                </div>
+                
+                <button type="submit" class="btn-submit">Войти в систему</button>
+            </form>
+        </div>
+    </div>
     <header>
         <div>
             <section>
@@ -24,6 +55,7 @@
                     <a href="#why-us">Почему мы?</a>
                     <a href="#services">Услуги</a>
                     <a href="#chat-us">Контакты</a>
+                    <button class="login-btn" onclick="show_hide('login-layer')">Вход</button>
                 </nav>
             </section>
         </div>
@@ -49,7 +81,7 @@
             </div>
             <div class="container">
                 <div class="left">
-                    <img src="img/economic.jpg" alt="">
+                    <img src="img/economic.png" alt="">
                 </div>
                 <div class="right">
                     <h3>Экономическая эффективность</h3>
@@ -62,12 +94,12 @@
                     <p>Мы обеспечиваем непрерывный мониторинг и оперативное реагирование на угрозы 24/7/365, что особенно важно в условиях растущей сложности кибератак.</p>
                 </div>
                 <div class="right">
-                    <img src="img/allday.jpg" alt="">
+                    <img src="img/allday.png" alt="">
                 </div>
             </div>
             <div class="container">
                 <div class="left">
-                    <img src="img/complience.jpg" alt="">
+                    <img src="img/complience.png" alt="">
                 </div>
                 <div class="right">
                     <h3>Соблюдение требований регуляторов</h3>
@@ -79,7 +111,7 @@
         <section id="clients">
             <h2>Наши клиенты</h2>
             <p>Мы работаем с компаниями из различных секторов экономики, включая финансовый сектор, телекоммуникации, электронную коммерцию, государственные учреждения и промышленные предприятия.</p>
-            <img src="img/clients.png" alt="">
+            <div class="overflow"><img src="img/clients.png" alt=""></div>
         </section>
 
         <section id="services">
@@ -194,6 +226,70 @@
         <section id="chat-us">
             <h2>Свяжитесь с нами</h2>
             <p>Готовы обсудить, как мы можем помочь защитить ваш бизнес? Оставьте заявку на консультацию, и наши эксперты подготовят индивидуальное предложение для вашей компании.</p>
+            <div class="form-container">
+                <form name="contact-form" action="https://httpbin.org/post" method="POST" accept-charset="utf-8">
+                    <div class="form-group">
+                        <label for="fullname">ФИО <span class="required">*</span></label>
+                        <input type="text" id="fullname" name="fullname" required placeholder="Введите ваше полное имя">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Откуда вы узнали о нас? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="source-google" name="source" value="поисковые системы" required>
+                                <label for="source-google">Поисковые системы (Google, Yandex)</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="source-social" name="source" value="социальные сети">
+                                <label for="source-social">Социальные сети</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="source-friend" name="source" value="друзья">
+                                <label for="source-friend">Рекомендация коллеги/друга</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="source-other" name="source" value="другое">
+                                <label for="source-other">Другое</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="request-type">Тип обращения <span class="required">*</span></label>
+                        <select id="request-type" name="request-type" required>
+                            <option value="" disabled selected>Выберите тип обращения</option>
+                            <option value="жалоба">Жалоба</option>
+                            <option value="предложение">Предложение</option>
+                            <option value="вопрос">Вопрос</option>
+                            <option value="сотрудничество">Предложение о сотрудничестве</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Текст сообщения <span class="required">*</span></label>
+                        <textarea id="message" name="message" required placeholder="Опишите вашу проблему, предложение или вопрос..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachment">Вложения</label>
+                        <input type="file" id="attachment" name="attachment" multiple>
+                        <small style="color: #a0a0a0; display: block; margin-top: 5px;">Вы можете приложить несколько файлов (максимальный размер: 10MB)</small>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label for="consent">Даю согласие на обработку моих персональных данных в соответствии с Федеральным законом №152-ФЗ "О персональных данных" <span class="required">*</span></label>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Отправить сообщение</button>
+                </form>
+            </div>
         </section>
     </main>
 
