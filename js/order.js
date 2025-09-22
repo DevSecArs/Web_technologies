@@ -18,15 +18,3 @@ window.onclick = function(event) {
         closeOrderForm();
     }
 }
-
-// Обработка отправки формы
-document.getElementById('orderForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Здесь можно добавить отправку данных на сервер
-    alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
-    closeOrderForm();
-    
-    // Очистка формы
-    this.reset();
-});

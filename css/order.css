@@ -1,4 +1,4 @@
-#services {
+.services {
     display: flex;
     flex-flow: row wrap;
     padding: 10px;
