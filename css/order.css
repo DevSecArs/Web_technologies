@@ -1,0 +1,126 @@
+#services {
+    display: flex;
+    flex-flow: row wrap;
+    padding: 10px;
+    margin: auto;
+    gap: 30px 30px;
+    align-items: center;
+    justify-content: center;
+}
+.card {
+    width: 300px;
+    height: 455px;
+    border: 2px solid rgb(0,0,55);
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.img-holder {
+    display: inline-block;
+    width: 100%;  
+    height: 200px; 
+}
+img {
+    width: 100%;
+    height: 100%;
+}
+.price {
+    text-align: right;
+    font-weight: bold;
+}
+h1 {text-align: center;}
+.descryption {
+    color: rgb(70, 70, 70);
+}
+button.order {
+    background-color: rgba(0,0,55,0.85);
+    color: white;
+    padding: 10px 40px;
+    border: 1px solid rgb(60,60,95);
+    border-radius: 20px;
+}
+button.order:hover {
+    background-color: rgba(100,100,195,0.85);
+    cursor: pointer;
+}
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.service-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}

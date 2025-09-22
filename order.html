@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/logo.png">
+    <link rel="stylesheet" href="css/template.css">
+    <link rel="stylesheet" href="css/order.css">
+    <script src="js/order.js"></script>
+    <title>Заказ</title>
+</head>
+<body>
+    <header>
+        <div>
+            <section>
+                <p><span><b>АКИБ</b></span> <span>Аутсорсинг</span> <span>IT</span> <span>Безопасность</span></p>
+            </section>
+
+            <section>
+                <nav>
+                    <a href="./index.html">Главная</a>
+                </nav>
+            </section>
+        </div>
+    </header>
+    <main>
+        <h1>Услуги</h1>
+        <section id="services">
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/pentest.jpg" alt="">
+                </div>
+                <h3>Пентест внешней инфраструктуры</h3>
+                <p class="descryption">Тестирование на проникновение внешних сетевых периметров и веб-приложений</p>
+                <hr>
+                <p class="price">от 120 000 ₽</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Пентест внешней инфраструктуры', 'от 120 000 ₽')">Заказать</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/audit-fz.jpg" alt="">
+                </div>
+                <h3>Аудит на соответствие 152-ФЗ</h3>
+                <p class="descryption">Проверка соответствия требованиям законодательства о защите персональных данных</p>
+                <hr>
+                <p class="price">от 90 000 ₽</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Аудит на соответствие 152-ФЗ', 'от 90 000 ₽')">Заказать</button>
+                </div>
+            </div>
+            
+            <!-- Остальные карточки с аналогичными изменениями в кнопках -->
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/audit-net.jpg" alt="">
+                </div>
+                <h3>Аудит внутренней сети</h3>
+                <p class="descryption">Анализ защищенности внутренней инфраструктуры и выявление уязвимостей</p>
+                <hr>
+                <p class="price">от 150 000 ₽</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Аудит внутренней сети', 'от 150 000 ₽')">Заказать</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/SOC.jpg" alt="">
+                </div>
+                <h3>Круглосуточный SOC</h3>
+                <p class="descryption">Круглосуточный мониторинг событий информационной безопасности</p>
+                <hr>
+                <p class="price">от 200 000 ₽/мес</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Круглосуточный SOC', 'от 200 000 ₽/мес')">Заказать</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/incident.jpg" alt="">
+                </div>
+                <h3>Реагирование на инциденты</h3>
+                <p class="descryption">Оперативное реагирование и расследование киберинцидентов</p>
+                <hr>
+                <p class="price">от 80 000 ₽/инцидент</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Реагирование на инциденты', 'от 80 000 ₽/инцидент')">Заказать</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="img-holder">
+                    <img src="img/services/firewall.png" alt="">
+                </div>
+                <h3>Настройка межсетевых экранов</h3>
+                <p class="descryption">Проектирование и настройка систем сетевой защиты</p>
+                <hr>
+                <p class="price">от 70 000 ₽</p>
+                <div class="center">
+                    <button class="order" onclick="openOrderForm('Настройка межсетевых экранов', 'от 70 000 ₽')">Заказать</button>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    <footer>
+        <div>
+            <section>+7 (999) 999 99-99</section>
+            <section>© Все права защищены студентом Московского Политеха А.А. 2025</section>
+            <section>г.Москва, улица Автозаводская, 16с5</section>
+        </div>
+    </footer>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrderForm()">&times;</span>
+            <h2>Заказ услуги</h2>
+            
+            <div class="service-info">
+                <p><strong>Услуга:</strong> <span id="selectedService"></span></p>
+                <p><strong>Стоимость:</strong> <span id="selectedPrice"></span></p>
+            </div>
+
+            <form id="orderForm" action="https://httpbin.org/post" method="POST" accept-charset="utf-8">
+                <div class="form-group">
+                    <label for="company">Компания *</label>
+                    <input type="text" id="company" name="company" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Контактное лицо *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Телефон *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Описание задачи</label>
+                    <textarea id="description" name="description" placeholder="Опишите кратко ваши потребности..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="employees">Количество сотрудников</label>
+                    <select id="employees" name="employees">
+                        <option value="">Выберите количество</option>
+                        <option value="1-10">1-10</option>
+                        <option value="11-50">11-50</option>
+                        <option value="51-200">51-200</option>
+                        <option value="201-500">201-500</option>
+                        <option value="500+">500+</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
