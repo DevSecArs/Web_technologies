@@ -73,6 +73,10 @@ footer section {
 }
 /* ====== Mobile ====== */
 @media screen and (max-width: 600px) {
+    header {
+        border-bottom-left-radius: 60px;
+        border-bottom-right-radius: 60px;
+    }
     header nav a {
         display: block;
     }

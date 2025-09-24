@@ -19,6 +19,9 @@
             <section>
                 <nav>
                     <a href="./index.html">Главная</a>
+                    <div id="cart-icon" onclick="toggleCart()">
+                        🛒 Корзина (<span id="cart-count">0</span>)
+                    </div>
                 </nav>
             </section>
         </div>
@@ -303,6 +306,26 @@
 
                 <button type="submit" class="submit-btn">Отправить заявку</button>
             </form>
+        </div>
+    </div>
+
+    <div id="cartModal" class="modal">
+        <div class="cart-modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Корзина услуг</h2>
+            
+            <div id="cartItems">
+                <!-- Содержимое корзины будет здесь -->
+            </div>
+            
+            <div class="cart-total">
+                Итого: <span id="cartTotal">0 ₽</span>
+            </div>
+            
+            <div class="cart-actions">
+                <button id="closeCart" onclick="closeCart()">Продолжить выбор</button>
+                <button id="checkoutBtn" onclick="checkoutFromCart()">Перейти к оформлению</button>
+            </div>
         </div>
     </div>
 </body>

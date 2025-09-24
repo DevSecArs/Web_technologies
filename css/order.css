@@ -1,3 +1,4 @@
+/* === Main === */
 .services {
     display: flex;
     flex-flow: row wrap;
@@ -14,6 +15,12 @@
     border-radius: 15px;
     padding: 10px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.card h3 {
+    min-height: 46px;
+}
+.card p.descryption {
+    min-height: 58px;
 }
 .img-holder {
     display: inline-block;
@@ -43,7 +50,7 @@ button.order:hover {
     background-color: rgba(100,100,195,0.85);
     cursor: pointer;
 }
-/* Стили для модального окна */
+/* === Modal === */
 .modal {
     display: none;
     position: fixed;
@@ -123,4 +130,135 @@ textarea {
     border-radius: 5px;
     margin-bottom: 20px;
     border-left: 4px solid #007bff;
+}
+/* === Cart === */
+#cart-icon {
+    cursor: pointer;
+    display: inline-block;
+    background-color: none;
+    color: white;
+}
+
+/* === Cart Modal === */
+#cartModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.cart-modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#cartItems {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-info {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.remove-item {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.remove-item:hover {
+    background-color: #cc0000;
+}
+
+.cart-total {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#checkoutBtn {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#checkoutBtn:hover {
+    background-color: #1a252f;
+}
+
+#closeCart {
+    background-color: white;
+    color: rgb(0,0,55);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#closeCart:hover {
+    background-color: #7f8c8d;
+}
+
+.empty-cart-message {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+}
+
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 80%;
+    }
 }
