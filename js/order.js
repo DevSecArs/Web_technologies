@@ -192,6 +192,243 @@ document.addEventListener('DOMContentLoaded', function() {
     renderServices();
 });
 
+
+// Глобальные переменные для фильтров
+let currentFilters = {
+    category: 'all',
+    price: 'all',
+    sort: 'name'
+};
+
+// Функция для извлечения числовой цены из строки
+function extractPrice(priceString) {
+    const priceMatch = priceString.match(/(\d+[\s\d]*)/);
+    return priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : 0;
+}
+
+// Функция для применения фильтров
+function applyFilters() {
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const priceFilter = document.getElementById('priceFilter').value;
+    const sortFilter = document.getElementById('sortFilter').value;
+    
+    currentFilters = {
+        category: categoryFilter,
+        price: priceFilter,
+        sort: sortFilter
+    };
+    
+    renderFilteredServices();
+}
+
+// Функция для фильтрации услуг
+function filterServices() {
+    let filteredData = JSON.parse(JSON.stringify(servicesData)); // Глубокая копия
+    
+    // Фильтрация по категории
+    if (currentFilters.category !== 'all') {
+        filteredData = filteredData.filter(section => 
+            section.section === currentFilters.category
+        );
+    }
+    
+    // Фильтрация по цене и сортировка внутри каждой секции
+    filteredData.forEach(section => {
+        // Фильтрация услуг по цене
+        if (currentFilters.price !== 'all') {
+            section.services = section.services.filter(service => {
+                const price = extractPrice(service.price);
+                
+                switch (currentFilters.price) {
+                    case '0-50000':
+                        return price <= 50000;
+                    case '50000-100000':
+                        return price >= 50000 && price <= 100000;
+                    case '100000-150000':
+                        return price >= 100000 && price <= 150000;
+                    case '150000-200000':
+                        return price >= 150000 && price <= 200000;
+                    case '200000+':
+                        return price >= 200000;
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        // Сортировка услуг
+        section.services.sort((a, b) => {
+            const priceA = extractPrice(a.price);
+            const priceB = extractPrice(b.price);
+            
+            switch (currentFilters.sort) {
+                case 'name':
+                    return a.name.localeCompare(b.name, 'ru');
+                case 'name-desc':
+                    return b.name.localeCompare(a.name, 'ru');
+                case 'price':
+                    return priceA - priceB;
+                case 'price-desc':
+                    return priceB - priceA;
+                default:
+                    return a.name.localeCompare(b.name, 'ru');
+            }
+        });
+    });
+    
+    return filteredData;
+}
+
+// Функция для создания карточки услуги (обновленная)
+function createServiceCard(service) {
+    return `
+        <div class="card" data-category="${service.section}" data-price="${extractPrice(service.price)}">
+            <div class="img-holder">
+                <img src="${service.image}" alt="${service.name}" onerror="this.src='img/services/defence_template.jpg'">
+            </div>
+            <h3>${service.name}</h3>
+            <p class="descryption">${service.description}</p>
+            <hr>
+            <p class="price">${service.price}</p>
+            <div class="center">
+                <button class="order" onclick="openOrderForm('${service.name.replace(/'/g, "\\'")}', '${service.price.replace(/'/g, "\\'")}')">Заказать</button>
+            </div>
+        </div>
+    `;
+}
+
+// Функция для создания секции с услугами (обновленная)
+function createServiceSection(sectionData) {
+    if (sectionData.services.length === 0) {
+        return ''; // Не показываем секции без услуг
+    }
+    
+    const servicesHTML = sectionData.services.map(service => 
+        createServiceCard(service)
+    ).join('');
+    
+    return `
+        <section id="${sectionData.section}" class="service-section">
+            <h1>${sectionData.title}</h1>
+            <div class="services">
+                ${servicesHTML}
+            </div>
+        </section>
+    `;
+}
+
+// Функция для отображения сообщения об отсутствии результатов
+function showNoResultsMessage() {
+    return `
+        <div class="no-results">
+            <h3>Услуги не найдены</h3>
+            <p>Попробуйте изменить параметры фильтрации</p>
+            <button onclick="resetFilters()" class="reset-btn" style="margin-top: 15px;">Сбросить фильтры</button>
+        </div>
+    `;
+}
+
+// Функция для рендеринга отфильтрованных услуг
+function renderFilteredServices() {
+    const mainElement = document.querySelector('main');
+    const filteredData = filterServices();
+    
+    // Удаляем старые секции услуг (кроме фильтров)
+    const existingSections = mainElement.querySelectorAll('.service-section, .no-results');
+    existingSections.forEach(section => section.remove());
+    
+    // Вставляем отфильтрованные секции после фильтров
+    const filtersSection = document.getElementById('filters');
+    
+    let hasResults = false;
+    const allSectionsHTML = filteredData.map(sectionData => {
+        if (sectionData.services.length > 0) {
+            hasResults = true;
+            return createServiceSection(sectionData);
+        }
+        return '';
+    }).join('');
+    
+    if (!hasResults) {
+        filtersSection.insertAdjacentHTML('afterend', showNoResultsMessage());
+    } else {
+        filtersSection.insertAdjacentHTML('afterend', allSectionsHTML);
+    }
+}
+
+// Функция сброса фильтров
+function resetFilters() {
+    document.getElementById('categoryFilter').value = 'all';
+    document.getElementById('priceFilter').value = 'all';
+    document.getElementById('sortFilter').value = 'name';
+    
+    currentFilters = {
+        category: 'all',
+        price: 'all',
+        sort: 'name'
+    };
+    
+    renderFilteredServices();
+}
+
+// Инициализация при загрузке страницы (обновленная)
+document.addEventListener('DOMContentLoaded', function() {
+    // Сначала рендерим фильтры
+    const mainElement = document.querySelector('main');
+    const filtersHTML = `
+        <section id="filters">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="categoryFilter">Категория:</label>
+                    <select id="categoryFilter">
+                        <option value="all">Все категории</option>
+                        <option value="audit">Аудит и оценка безопасности</option>
+                        <option value="monitoring">Мониторинг и реагирование</option>
+                        <option value="defence">Защита инфраструктуры</option>
+                        <option value="policy">Политики безопасности</option>
+                        <option value="consultation">Консультационные услуги</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="priceFilter">Цена:</label>
+                    <select id="priceFilter">
+                        <option value="all">Любая цена</option>
+                        <option value="0-50000">до 50 000 ₽</option>
+                        <option value="50000-100000">50 000 - 100 000 ₽</option>
+                        <option value="100000-150000">100 000 - 150 000 ₽</option>
+                        <option value="150000-200000">150 000 - 200 000 ₽</option>
+                        <option value="200000+">от 200 000 ₽</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sortFilter">Сортировка:</label>
+                    <select id="sortFilter">
+                        <option value="name">По названию (А-Я)</option>
+                        <option value="name-desc">По названию (Я-А)</option>
+                        <option value="price">По цене (возрастание)</option>
+                        <option value="price-desc">По цене (убывание)</option>
+                    </select>
+                </div>
+                
+                <button id="resetFilters" class="reset-btn">Сбросить фильтры</button>
+            </div>
+        </section>
+    `;
+    
+    mainElement.innerHTML = filtersHTML;
+    
+    // Затем рендерим услуги
+    renderFilteredServices();
+    
+    // Добавляем обработчики событий для фильтров
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+    document.getElementById('priceFilter').addEventListener('change', applyFilters);
+    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+});
+
 // Остальной код из вашего оригинального файла остается без изменений:
 // Глобальная переменная для хранения товаров в корзине
 let cart = [];
