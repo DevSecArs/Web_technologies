@@ -259,7 +259,6 @@ textarea {
 /* Стили для фильтров */
 #filters {
     padding: 20px 0;
-    margin-bottom: 30px;
     border-bottom: 2px solid rgb(0,0,55);
     border-radius: 40px;
 }
@@ -311,6 +310,97 @@ textarea {
     background-color: #5a6268;
 }
 
+/* Готовые предложения */
+#offers {
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgb(0,0,55);
+    border-radius: 40px;
+    text-align: center;
+}
+
+.offer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: end;
+    justify-content: center;
+}
+
+.offer-group {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.offer-btn {
+    width: 210px;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid rgb(30,30,100);
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 1;
+    text-align: center;
+}
+
+.offer-btn:hover {
+    background-color: #e9ecef;
+}
+
+.offer-content {
+    display: none;
+    padding: 5px;
+    background-color: rgba(30,30,100,0.95);
+    color: #f8f9fa;
+    border: none;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    width: 200px;
+    position: absolute;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.offer-content.active {
+    display: block;
+}
+
+/* Дополнительные стили для улучшения внешнего вида */
+.offer-btn::after {
+    content: "▼";
+    float: right;
+    font-size: 12px;
+    padding: 0px 5px;
+    transition: transform 0.3s;
+}
+
+.offer-btn.active::after {
+    transform: rotate(180deg);
+}
+/*
+.offer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: end;
+    justify-content: center;
+}
+.offer-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+} */
 /* Стили для скрытых секций */
 .hidden {
     display: none !important;

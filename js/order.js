@@ -338,7 +338,7 @@ function renderFilteredServices() {
     existingSections.forEach(section => section.remove());
     
     // Вставляем отфильтрованные секции после фильтров
-    const filtersSection = document.getElementById('filters');
+    const filtersSection = document.getElementById('offers');
     
     let hasResults = false;
     const allSectionsHTML = filteredData.map(sectionData => {
@@ -377,44 +377,68 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainElement = document.querySelector('main');
     const filtersHTML = `
         <section id="filters">
-            <div class="filters-container">
-                <div class="filter-group">
-                    <label for="categoryFilter">Категория:</label>
-                    <select id="categoryFilter">
-                        <option value="all">Все категории</option>
-                        <option value="audit">Аудит и оценка безопасности</option>
-                        <option value="monitoring">Мониторинг и реагирование</option>
-                        <option value="defence">Защита инфраструктуры</option>
-                        <option value="policy">Политики безопасности</option>
-                        <option value="consultation">Консультационные услуги</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="priceFilter">Цена:</label>
-                    <select id="priceFilter">
-                        <option value="all">Любая цена</option>
-                        <option value="0-50000">до 50 000 ₽</option>
-                        <option value="50000-100000">50 000 - 100 000 ₽</option>
-                        <option value="100000-150000">100 000 - 150 000 ₽</option>
-                        <option value="150000-200000">150 000 - 200 000 ₽</option>
-                        <option value="200000+">от 200 000 ₽</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="sortFilter">Сортировка:</label>
-                    <select id="sortFilter">
-                        <option value="name">По названию (А-Я)</option>
-                        <option value="name-desc">По названию (Я-А)</option>
-                        <option value="price">По цене (возрастание)</option>
-                        <option value="price-desc">По цене (убывание)</option>
-                    </select>
-                </div>
-                
-                <button id="resetFilters" class="reset-btn">Сбросить фильтры</button>
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="categoryFilter">Категория:</label>
+                <select id="categoryFilter">
+                    <option value="all">Все категории</option>
+                    <option value="audit">Аудит и оценка безопасности</option>
+                    <option value="monitoring">Мониторинг и реагирование</option>
+                    <option value="defence">Защита инфраструктуры</option>
+                    <option value="policy">Политики безопасности</option>
+                    <option value="consultation">Консультационные услуги</option>
+                </select>
             </div>
-        </section>
+            
+            <div class="filter-group">
+                <label for="priceFilter">Цена:</label>
+                <select id="priceFilter">
+                    <option value="all">Любая цена</option>
+                    <option value="0-50000">до 50 000 ₽</option>
+                    <option value="50000-100000">50 000 - 100 000 ₽</option>
+                    <option value="100000-150000">100 000 - 150 000 ₽</option>
+                    <option value="150000-200000">150 000 - 200 000 ₽</option>
+                    <option value="200000+">от 200 000 ₽</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sortFilter">Сортировка:</label>
+                <select id="sortFilter">
+                    <option value="name">По названию (А-Я)</option>
+                    <option value="name-desc">По названию (Я-А)</option>
+                    <option value="price">По цене (возрастание)</option>
+                    <option value="price-desc">По цене (убывание)</option>
+                </select>
+            </div>
+            
+            <button id="resetFilters" class="reset-btn">Сбросить фильтры</button>
+        </div>
+    </section>
+
+    <section id="offers">
+        <h2>Выгодные предложения</h2>
+        <div class="offer-container">
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Полный аудит</button>
+                <div class="offer-content">
+                    <p>Закажите все виды аудита и получите скидку в 10%</p>
+                </div>
+            </div>
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Ввод политик ИБ</button>
+                <div class="offer-content">
+                    <p>Только запускаете ИБ? Закажите разработку ИБ политики и обучение персонала и получите скидку в 15%</p>
+                </div>
+            </div>
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Веб-защита</button>
+                <div class="offer-content">
+                    <p>При заказе круглосуточного SOC и защиты от DDoS-атак, получите услугу "Защита веб-приложений" бесплатно</p>
+                </div>
+            </div>
+        </div>
+    </section>
     `;
     
     mainElement.innerHTML = filtersHTML;
@@ -627,3 +651,36 @@ window.onclick = function(event) {
         closeCart();
     }
 }
+
+// Всплывающий список с инфой об офферах
+function toggleOffer(button) {
+    const offerGroup = button.parentElement;
+    const content = offerGroup.querySelector('.offer-content');
+    const isActive = content.classList.contains('active');
+    
+    // Закрываем все открытые блоки
+    document.querySelectorAll('.offer-content').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.querySelectorAll('.offer-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Если блок был закрыт, открываем его
+    if (!isActive) {
+        content.classList.add('active');
+        button.classList.add('active');
+    }
+}
+
+// Закрытие при клике вне блока (опционально)
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.offer-group')) {
+        document.querySelectorAll('.offer-content').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelectorAll('.offer-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+    }
+});
