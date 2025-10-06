@@ -10,17 +10,17 @@
 }
 .card {
     width: 300px;
-    height: 455px;
+    height: 480px;
     border: 2px solid rgb(0,0,55);
     border-radius: 15px;
     padding: 10px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .card h3 {
-    min-height: 46px;
+    min-height: 54px;
 }
 .card p.descryption {
-    min-height: 58px;
+    min-height: 68px;
 }
 .img-holder {
     display: inline-block;
