@@ -594,6 +594,7 @@ function openOrderFormFromCart(servicesText) {
     document.getElementById('orderModal').style.display = 'block';
 }
 
+
 // Функция закрытия формы заказа
 function closeOrderForm() {
     document.getElementById('orderModal').style.display = 'none';
@@ -684,3 +685,269 @@ document.addEventListener('click', function(event) {
         });
     }
 });
+
+// ===================================================================================================================
+
+// Обработчик отправки формы
+document.addEventListener('DOMContentLoaded', function() {
+    const orderForm = document.getElementById('orderForm');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(event) {
+            submitOrderForm(event);
+        });
+    }
+});
+
+// Функция закрытия модального окна и отправки формы
+function closeOfferModalAndSubmit() {
+    closeOfferModal();
+    // Вызываем фактическую отправку формы
+    actuallySubmitOrderForm();
+}
+
+// Обновленная функция отправки формы заказа
+function submitOrderForm(event) {
+    event.preventDefault();
+    
+    console.log('Проверяем предложения для корзины:', cart);
+    
+    // Проверяем предложения перед отправкой
+    const applicableOffers = checkOffers(cart);
+    
+    if (applicableOffers.length > 0) {
+        console.log('Найдены предложения:', applicableOffers);
+        // Показываем модальное окно с предложениями
+        showOfferModal(applicableOffers);
+    } else {
+        console.log('Предложений не найдено');
+        // Если предложений нет, отправляем форму сразу
+        actuallySubmitOrderForm();
+    }
+}
+
+// Функция фактической отправки формы (оригинальная логика)
+function actuallySubmitOrderForm() {
+    console.log('Фактическая отправка формы');
+    
+    // Собираем данные формы
+    const formData = {
+        service: document.getElementById('selectedService').textContent,
+        price: document.getElementById('selectedPrice').textContent,
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        company: document.getElementById('company').value,
+        description: document.getElementById('description').value,
+        employees: document.getElementById('employees').value,
+        cartItems: JSON.stringify(cart) // Преобразуем в строку для отправки
+    };
+
+    // Создаем скрытые поля для добавления данных в форму
+    const form = document.getElementById('orderForm');
+    
+    // Добавляем данные корзины как скрытое поле
+    let cartInput = form.querySelector('input[name="cartItems"]');
+    if (!cartInput) {
+        cartInput = document.createElement('input');
+        cartInput.type = 'hidden';
+        cartInput.name = 'cartItems';
+        form.appendChild(cartInput);
+    }
+    cartInput.value = JSON.stringify(cart);
+    
+    // Добавляем информацию об услуге как скрытое поле
+    let serviceInput = form.querySelector('input[name="serviceInfo"]');
+    if (!serviceInput) {
+        serviceInput = document.createElement('input');
+        serviceInput.type = 'hidden';
+        serviceInput.name = 'serviceInfo';
+        form.appendChild(serviceInput);
+    }
+    serviceInput.value = document.getElementById('selectedService').textContent + ' - ' + document.getElementById('selectedPrice').textContent;
+
+    // Отправляем форму обычным способом
+    form.submit();
+    
+    // Показываем уведомление об успешной отправке
+    showNotification('Заказ успешно отправлен! Мы свяжемся с вами в ближайшее время.');
+    
+    // Закрываем модальное окно
+    closeOrderForm();
+    
+    // Очищаем корзину
+    cart = [];
+    updateCartDisplay();
+}
+
+
+
+// Обновленная функция для обновления формы заказа из корзины
+function updateOrderFormFromCart() {
+    if (document.getElementById('orderModal') && document.getElementById('orderModal').style.display === 'block') {
+        // Если форма заказа открыта, обновляем ее
+        const descriptionField = document.getElementById('description');
+        let cartText = "Заказанные услуги:\n";
+        cart.forEach(item => {
+            cartText += `- ${item.name} (${item.price}) × ${item.quantity}\n`;
+        });
+        descriptionField.value = cartText;
+        
+        document.getElementById('selectedService').textContent = cart.length === 1 ? cart[0].name : 'Комплекс услуг';
+        document.getElementById('selectedPrice').textContent = cart.length === 1 ? cart[0].price : 'Рассчитывается индивидуально';
+    }
+}
+
+// Функция для проверки предложений и поиска недостающих услуг
+function checkOffers(cartItems) {
+    const offers = [
+        {
+            name: "Полный аудит",
+            requiredServices: ["Пентест внешней инфраструктуры", "Аудит внутренней сети", "Аудит на соответствие 152-ФЗ"],
+            discount: "10%",
+            description: "Закажите все виды аудита и получите скидку в 10%",
+            missingServices: []
+        },
+        {
+            name: "Ввод политик ИБ", 
+            requiredServices: ["Разработка политик ИБ", "Обучение сотрудников"],
+            discount: "15%",
+            description: "Только запускаете ИБ? Закажите разработку ИБ политики и обучение персонала и получите скидку в 15%",
+            missingServices: []
+        },
+        {
+            name: "Веб-защита",
+            requiredServices: ["Круглосуточный SOC", "Защита от DDoS-атак", "Защита веб-приложений"],
+            discount: "бесплатно",
+            description: "При заказе круглосуточного SOC и защиты от DDoS-атак, получите услугу 'Защита веб-приложений' бесплатно",
+            missingServices: []
+        }
+    ];
+
+    // Проверяем каждое предложение
+    const applicableOffers = offers.map(offer => {
+        const cartServiceNames = cartItems.map(item => item.name);
+        offer.missingServices = offer.requiredServices.filter(
+            service => !cartServiceNames.includes(service)
+        );
+        
+        // Предложение применимо, если есть хотя бы одна услуга из requiredServices
+        // но не все (иначе предложение уже выполнено)
+        const hasSomeServices = offer.requiredServices.some(
+            service => cartServiceNames.includes(service)
+        );
+        const hasAllServices = offer.missingServices.length === 0;
+        
+        return {
+            ...offer,
+            isApplicable: hasSomeServices && !hasAllServices,
+            progress: Math.round((1 - offer.missingServices.length / offer.requiredServices.length) * 100)
+        };
+    }).filter(offer => offer.isApplicable);
+
+    return applicableOffers;
+}
+
+// Функция для показа модального окна с предложениями
+function showOfferModal(offers) {
+    const modal = document.createElement('div');
+    modal.id = 'offerModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1002;
+    `;
+
+    let offersHTML = '';
+    
+    if (offers.length > 0) {
+        offersHTML = `
+            <h3 style="color: rgb(0,0,55); margin-top: 0;">Специальные предложения для вас!</h3>
+            <p>Добавьте недостающие услуги и получите выгоду:</p>
+            ${offers.map(offer => `
+                <div class="offer-suggestion" style="border: 2px solid rgb(0,0,55); border-radius: 15px; padding: 15px; margin: 15px 0; background: #f9f9f9;">
+                    <h4 style="margin-top: 0; color: rgb(0,0,55);">${offer.name}</h4>
+                    <p>${offer.description}</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <strong>Недостающие услуги для получения скидки ${offer.discount}:</strong>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            ${offer.missingServices.map(service => 
+                                `<li>${service}</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        ${offer.missingServices.map(service => 
+                            `<button onclick="addMissingService('${service.replace(/'/g, "\\'")}')" 
+                                     style="padding: 8px 12px; background: rgb(0,0,55); color: white; border: none; border-radius: 20px; cursor: pointer; border: 1px solid rgb(60,60,95);">
+                                Добавить "${service}"
+                            </button>`
+                        ).join('')}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #7f8c8d;">
+                        Прогресс: ${offer.progress}% (у вас ${offer.requiredServices.length - offer.missingServices.length} из ${offer.requiredServices.length})
+                    </div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; max-height: 80vh; overflow-y: auto; margin: 20px;">
+            ${offersHTML}
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                <button onclick="closeOfferModalAndSubmit()" 
+                        style="padding: 10px 20px; background: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Отправить как есть
+                </button>
+                <button onclick="closeOfferModal()" 
+                        style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Вернуться к редактированию
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+// Функция для добавления недостающей услуги
+function addMissingService(serviceName) {
+    // Находим услугу в данных
+    let serviceToAdd = null;
+    
+    servicesData.forEach(section => {
+        const service = section.services.find(s => s.name === serviceName);
+        if (service) {
+            serviceToAdd = service;
+        }
+    });
+
+    if (serviceToAdd) {
+        // Добавляем услугу в корзину
+        addToCart(serviceToAdd.name, serviceToAdd.price);
+        
+        // Показываем уведомление
+        showNotification(`Услуга "${serviceName}" добавлена в корзину!`);
+        
+        // Закрываем модальное окно предложений
+        closeOfferModal();
+        
+        // Обновляем форму заказа
+        updateOrderFormFromCart();
+    }
+}
+
+// Функция закрытия модального окна предложений
+function closeOfferModal() {
+    const modal = document.getElementById('offerModal');
+    if (modal) {
+        modal.remove();
+    }
+}
