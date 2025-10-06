@@ -1,141 +1,183 @@
-// Данные услуг
-const servicesData = [
-    {
-        section: "audit",
-        title: "Аудит и оценка безопасности",
-        services: [
-            {
-                id: "pentest",
-                name: "Пентест внешней инфраструктуры",
-                description: "Тестирование на проникновение внешних сетевых периметров и веб-приложений",
-                price: "от 120 000 ₽",
-                image: "img/services/pentest.jpg"
-            },
-            {
-                id: "audit-net",
-                name: "Аудит внутренней сети",
-                description: "Анализ защищенности внутренней инфраструктуры и выявление уязвимостей",
-                price: "от 150 000 ₽",
-                image: "img/services/audit-net.jpg"
-            },
-            {
-                id: "audit-fz",
-                name: "Аудит на соответствие 152-ФЗ",
-                description: "Проверка соответствия требованиям законодательства о защите персональных данных",
-                price: "от 90 000 ₽",
-                image: "img/services/audit-fz.jpg"
-            }
-        ]
-    },
-    {
-        section: "monitoring",
-        title: "Мониторинг и реагирование",
-        services: [
-            {
-                id: "soc",
-                name: "Круглосуточный SOC",
-                description: "Круглосуточный мониторинг событий информационной безопасности",
-                price: "от 200 000 ₽/мес",
-                image: "img/services/SOC.jpg"
-            },
-            {
-                id: "incident",
-                name: "Реагирование на инциденты",
-                description: "Оперативное реагирование и расследование киберинцидентов",
-                price: "от 80 000 ₽/инцидент",
-                image: "img/services/incident.jpg"
-            },
-            {
-                id: "vul-control",
-                name: "Управление уязвимостями",
-                description: "Постоянный мониторинг, оценка и устранение уязвимостей",
-                price: "от 100 000 ₽/мес",
-                image: "img/services/vul_control.png"
-            }
-        ]
-    },
-    {
-        section: "defence",
-        title: "Защита инфраструктуры",
-        services: [
-            {
-                id: "ddos",
-                name: "Защита от DDoS-атак",
-                description: "Организация защиты от распределенных атак типа 'отказ в обслуживании'",
-                price: "от 50 000 ₽/мес",
-                image: "img/services/defence_template.jpg"
-            },
-            {
-                id: "firewall",
-                name: "Настройка межсетевых экранов",
-                description: "Проектирование и настройка систем сетевой защиты",
-                price: "от 70 000 ₽",
-                image: "img/services/firewall.png"
-            },
-            {
-                id: "web-defence",
-                name: "Защита веб-приложений",
-                description: "Внедрение WAF (Web Application Firewall) для защиты веб-приложений",
-                price: "от 120 000 ₽",
-                image: "img/services/defence_template.jpg"
-            }
-        ]
-    },
-    {
-        section: "policy",
-        title: "Создание и внедрение политик безопасности",
-        services: [
-            {
-                id: "policy-dev",
-                name: "Разработка политик ИБ",
-                description: "Создание регламентов и политик информационной безопасности",
-                price: "от 80 000 ₽",
-                image: "img/services/defence_template.jpg"
-            },
-            {
-                id: "training",
-                name: "Обучение сотрудников",
-                description: "Проведение тренингов по кибербезопасности для сотрудников",
-                price: "от 40 000 ₽",
-                image: "img/services/defence_template.jpg"
-            },
-            {
-                id: "access-control",
-                name: "Организация управления доступом",
-                description: "Построение системы управления правами доступа пользователей",
-                price: "от 100 000 ₽",
-                image: "img/services/defence_template.jpg"
-            }
-        ]
-    },
-    {
-        section: "consultation",
-        title: "Консультационные услуги",
-        services: [
-            {
-                id: "consult",
-                name: "Консультации по ИБ",
-                description: "Экспертные консультации по вопросам информационной безопасности",
-                price: "от 5 000 ₽/час",
-                image: "img/services/defence_template.jpg"
-            },
-            {
-                id: "architecture",
-                name: "Разработка архитектуры безопасности",
-                description: "Проектирование безопасной ИТ-инфраструктуры предприятия",
-                price: "от 180 000 ₽",
-                image: "img/services/defence_template.jpg"
-            },
-            {
-                id: "certification",
-                name: "Подготовка к сертификации",
-                description: "Подготовка предприятия к сертификации по стандартам ИБ",
-                price: "от 150 000 ₽",
-                image: "img/services/defence_template.jpg"
-            }
-        ]
+// Замените объявление servicesData и инициализацию на:
+let servicesData = [];
+
+// Если хотите использовать чистый JSON
+async function loadServicesData() {
+    try {
+        const response = await fetch('https://api-webtech.onrender.com/');
+        
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки данных');
+        }
+        
+        servicesData = await response.json();
+        console.log('Данные успешно загружены:', servicesData);
+        return true;
+    } catch (error) {
+        console.error('Ошибка загрузки данных услуг:', error);
+        servicesData = getFallbackData();
+        return false;
     }
-];
+}
+
+// Fallback данные на случай ошибки
+function getFallbackData() {
+    return [
+        {
+            section: "audit",
+            title: "Аудит и оценка безопасности",
+            services: [
+                {
+                    id: "pentest",
+                    name: "Пентест внешней инфраструктуры",
+                    description: "Тестирование на проникновение внешних сетевых периметров и веб-приложений",
+                    price: "от 120 000 ₽",
+                    image: "img/services/pentest.jpg"
+                }
+                // ... минимальный набор данных
+            ]
+        }
+    ];
+}
+
+// Функция для показа индикатора загрузки
+function showLoadingIndicator() {
+    const mainElement = document.querySelector('main');
+    mainElement.innerHTML = `
+        <div class="loading" style="text-align: center; padding: 50px;">
+            <div style="font-size: 18px; color: rgb(0,0,55);">Загрузка услуг...</div>
+            <div style="margin-top: 20px;">⏳</div>
+        </div>
+    `;
+}
+
+// Функция для показа сообщения об ошибке
+function showErrorMessage() {
+    const mainElement = document.querySelector('main');
+    mainElement.innerHTML = `
+        <div class="error-message" style="text-align: center; padding: 50px;">
+            <div style="font-size: 24px; color: #e74c3c;">⚠️</div>
+            <h3 style="color: #c0392b;">Ошибка загрузки данных</h3>
+            <p>Не удалось загрузить список услуг. Пожалуйста, попробуйте обновить страницу.</p>
+            <button onclick="location.reload()" style="padding: 10px 20px; background: rgb(0,0,55); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">
+                Обновить страницу
+            </button>
+        </div>
+    `;
+}
+
+// Функция для рендеринга фильтров
+function renderFilters() {
+    const mainElement = document.querySelector('main');
+    const filtersHTML = `
+        <section id="filters">
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="categoryFilter">Категория:</label>
+                <select id="categoryFilter">
+                    <option value="all">Все категории</option>
+                    <option value="audit">Аудит и оценка безопасности</option>
+                    <option value="monitoring">Мониторинг и реагирование</option>
+                    <option value="defence">Защита инфраструктуры</option>
+                    <option value="policy">Политики безопасности</option>
+                    <option value="consultation">Консультационные услуги</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="priceFilter">Цена:</label>
+                <select id="priceFilter">
+                    <option value="all">Любая цена</option>
+                    <option value="0-50000">до 50 000 ₽</option>
+                    <option value="50000-100000">50 000 - 100 000 ₽</option>
+                    <option value="100000-150000">100 000 - 150 000 ₽</option>
+                    <option value="150000-200000">150 000 - 200 000 ₽</option>
+                    <option value="200000+">от 200 000 ₽</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sortFilter">Сортировка:</label>
+                <select id="sortFilter">
+                    <option value="name">По названию (А-Я)</option>
+                    <option value="name-desc">По названию (Я-А)</option>
+                    <option value="price">По цене (возрастание)</option>
+                    <option value="price-desc">По цене (убывание)</option>
+                </select>
+            </div>
+            
+            <button id="resetFilters" class="reset-btn">Сбросить фильтры</button>
+        </div>
+    </section>
+
+    <section id="offers">
+        <h2>Выгодные предложения</h2>
+        <div class="offer-container">
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Полный аудит</button>
+                <div class="offer-content">
+                    <p>Закажите все виды аудита и получите скидку в 10%</p>
+                </div>
+            </div>
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Ввод политик ИБ</button>
+                <div class="offer-content">
+                    <p>Только запускаете ИБ? Закажите разработку ИБ политики и обучение персонала и получите скидку в 15%</p>
+                </div>
+            </div>
+            <div class="offer-group">
+                <button class="offer-btn" onclick="toggleOffer(this)">Веб-защита</button>
+                <div class="offer-content">
+                    <p>При заказе круглосуточного SOC и защиты от DDoS-атак, получите услугу "Защита веб-приложений" бесплатно</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    `;
+    
+    mainElement.innerHTML = filtersHTML;
+    
+    // Добавляем обработчики событий для фильтров
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+    document.getElementById('priceFilter').addEventListener('change', applyFilters);
+    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+}
+
+// ЕДИНСТВЕННЫЙ обработчик DOMContentLoaded
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('DOM загружен, начинаем инициализацию...');
+    
+    // Показываем индикатор загрузки
+    showLoadingIndicator();
+    
+    // Загружаем данные
+    const success = await loadServicesData();
+    console.log('Данные загружены успешно:', success, 'Данные:', servicesData);
+    
+    if (success && servicesData.length > 0) {
+        // Рендерим фильтры и услуги
+        renderFilters();
+        renderFilteredServices();
+        console.log('Услуги отрендерены');
+    } else {
+        // Показываем сообщение об ошибке
+        showErrorMessage();
+        console.error('Не удалось загрузить данные или данные пустые');
+    }
+    
+    // Добавляем обработчик для формы заказа
+    const orderForm = document.getElementById('orderForm');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(event) {
+            submitOrderForm(event);
+        });
+    }
+});
+
+// УДАЛИТЕ все остальные обработчики DOMContentLoaded из кода!
+
+// ==============================================================
 
 // Функция для создания карточки услуги
 function createServiceCard(service) {
@@ -371,89 +413,6 @@ function resetFilters() {
     renderFilteredServices();
 }
 
-// Инициализация при загрузке страницы (обновленная)
-document.addEventListener('DOMContentLoaded', function() {
-    // Сначала рендерим фильтры
-    const mainElement = document.querySelector('main');
-    const filtersHTML = `
-        <section id="filters">
-        <div class="filters-container">
-            <div class="filter-group">
-                <label for="categoryFilter">Категория:</label>
-                <select id="categoryFilter">
-                    <option value="all">Все категории</option>
-                    <option value="audit">Аудит и оценка безопасности</option>
-                    <option value="monitoring">Мониторинг и реагирование</option>
-                    <option value="defence">Защита инфраструктуры</option>
-                    <option value="policy">Политики безопасности</option>
-                    <option value="consultation">Консультационные услуги</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="priceFilter">Цена:</label>
-                <select id="priceFilter">
-                    <option value="all">Любая цена</option>
-                    <option value="0-50000">до 50 000 ₽</option>
-                    <option value="50000-100000">50 000 - 100 000 ₽</option>
-                    <option value="100000-150000">100 000 - 150 000 ₽</option>
-                    <option value="150000-200000">150 000 - 200 000 ₽</option>
-                    <option value="200000+">от 200 000 ₽</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="sortFilter">Сортировка:</label>
-                <select id="sortFilter">
-                    <option value="name">По названию (А-Я)</option>
-                    <option value="name-desc">По названию (Я-А)</option>
-                    <option value="price">По цене (возрастание)</option>
-                    <option value="price-desc">По цене (убывание)</option>
-                </select>
-            </div>
-            
-            <button id="resetFilters" class="reset-btn">Сбросить фильтры</button>
-        </div>
-    </section>
-
-    <section id="offers">
-        <h2>Выгодные предложения</h2>
-        <div class="offer-container">
-            <div class="offer-group">
-                <button class="offer-btn" onclick="toggleOffer(this)">Полный аудит</button>
-                <div class="offer-content">
-                    <p>Закажите все виды аудита и получите скидку в 10%</p>
-                </div>
-            </div>
-            <div class="offer-group">
-                <button class="offer-btn" onclick="toggleOffer(this)">Ввод политик ИБ</button>
-                <div class="offer-content">
-                    <p>Только запускаете ИБ? Закажите разработку ИБ политики и обучение персонала и получите скидку в 15%</p>
-                </div>
-            </div>
-            <div class="offer-group">
-                <button class="offer-btn" onclick="toggleOffer(this)">Веб-защита</button>
-                <div class="offer-content">
-                    <p>При заказе круглосуточного SOC и защиты от DDoS-атак, получите услугу "Защита веб-приложений" бесплатно</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
-    
-    mainElement.innerHTML = filtersHTML;
-    
-    // Затем рендерим услуги
-    renderFilteredServices();
-    
-    // Добавляем обработчики событий для фильтров
-    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-    document.getElementById('priceFilter').addEventListener('change', applyFilters);
-    document.getElementById('sortFilter').addEventListener('change', applyFilters);
-    document.getElementById('resetFilters').addEventListener('click', resetFilters);
-});
-
-// Остальной код из вашего оригинального файла остается без изменений:
 // Глобальная переменная для хранения товаров в корзине
 let cart = [];
 
@@ -700,6 +659,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Функция закрытия модального окна и отправки формы
 function closeOfferModalAndSubmit() {
+    console.log('Закрытие модального окна и отправка формы');
     closeOfferModal();
     // Вызываем фактическую отправку формы
     actuallySubmitOrderForm();
@@ -849,6 +809,9 @@ function checkOffers(cartItems) {
 
 // Функция для показа модального окна с предложениями
 function showOfferModal(offers) {
+    // Сначала закрываем предыдущее модальное окно, если оно есть
+    closeOfferModal();
+    
     const modal = document.createElement('div');
     modal.id = 'offerModal';
     modal.style.cssText = `
@@ -899,7 +862,7 @@ function showOfferModal(offers) {
     }
 
     modal.innerHTML = `
-        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; max-height: 80vh; overflow-y: auto; margin: 20px;">
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; max-height: 80vh; overflow-y: auto; margin: 20px; position: relative;">
             ${offersHTML}
             <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
                 <button onclick="closeOfferModalAndSubmit()" 
@@ -914,11 +877,24 @@ function showOfferModal(offers) {
         </div>
     `;
 
+    // Добавляем обработчик клика вне модального окна
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeOfferModal();
+        }
+    });
+
     document.body.appendChild(modal);
+    
+    // Блокируем прокрутку основного контента
+    document.body.style.overflow = 'hidden';
 }
+
 
 // Функция для добавления недостающей услуги
 function addMissingService(serviceName) {
+    console.log('Добавление услуги:', serviceName);
+    
     // Находим услугу в данных
     let serviceToAdd = null;
     
@@ -941,6 +917,9 @@ function addMissingService(serviceName) {
         
         // Обновляем форму заказа
         updateOrderFormFromCart();
+    } else {
+        console.warn('Услуга не найдена:', serviceName);
+        showNotification('Ошибка: услуга не найдена');
     }
 }
 
@@ -949,5 +928,31 @@ function closeOfferModal() {
     const modal = document.getElementById('offerModal');
     if (modal) {
         modal.remove();
+        // Восстанавливаем прокрутку
+        document.body.style.overflow = '';
+        console.log('Модальное окно предложений закрыто');
+    }
+}
+
+// Функция для скрытия индикатора загрузки
+function hideLoadingIndicator() {
+    // Автоматически скрывается при рендеринге контента
+}
+
+window.onclick = function(event) {
+    const orderModal = document.getElementById('orderModal');
+    const cartModal = document.getElementById('cartModal');
+    const offerModal = document.getElementById('offerModal');
+    
+    if (event.target === orderModal) {
+        closeOrderForm();
+    }
+    
+    if (event.target === cartModal) {
+        closeCart();
+    }
+    
+    if (event.target === offerModal) {
+        closeOfferModal();
     }
 }
