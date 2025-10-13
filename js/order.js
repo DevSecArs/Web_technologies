@@ -615,32 +615,9 @@ function submitOrderForm(event) {
 // Функция фактической отправки формы (оригинальная логика)
 function actuallySubmitOrderForm() {
     console.log('Фактическая отправка формы');
-    
-    // Собираем данные формы
-    const formData = {
-        service: document.getElementById('selectedService').textContent,
-        price: document.getElementById('selectedPrice').textContent,
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        company: document.getElementById('company').value,
-        description: document.getElementById('description').value,
-        employees: document.getElementById('employees').value,
-        cartItems: JSON.stringify(cart) // Преобразуем в строку для отправки
-    };
 
     // Создаем скрытые поля для добавления данных в форму
     const form = document.getElementById('orderForm');
-    
-    // Добавляем данные корзины как скрытое поле
-    let cartInput = form.querySelector('input[name="cartItems"]');
-    if (!cartInput) {
-        cartInput = document.createElement('input');
-        cartInput.type = 'hidden';
-        cartInput.name = 'cartItems';
-        form.appendChild(cartInput);
-    }
-    cartInput.value = JSON.stringify(cart);
     
     // Добавляем информацию об услуге как скрытое поле
     let serviceInput = form.querySelector('input[name="serviceInfo"]');
