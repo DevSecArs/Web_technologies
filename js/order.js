@@ -1,7 +1,8 @@
+// ======================================== Подгрузка данных с сервера ========================================
 // Замените объявление servicesData и инициализацию на:
 let servicesData = [];
 
-// Если хотите использовать чистый JSON
+// Подгрузка данных через JSON
 async function loadServicesData() {
     try {
         const response = await fetch('https://api-webtech.onrender.com/');
@@ -66,6 +67,7 @@ function showErrorMessage() {
     `;
 }
 
+// ======================================== Фильтрация ========================================
 // Функция для рендеринга фильтров
 function renderFilters() {
     const mainElement = document.querySelector('main');
@@ -144,97 +146,6 @@ function renderFilters() {
     document.getElementById('resetFilters').addEventListener('click', resetFilters);
 }
 
-// ЕДИНСТВЕННЫЙ обработчик DOMContentLoaded
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('DOM загружен, начинаем инициализацию...');
-    
-    // Показываем индикатор загрузки
-    showLoadingIndicator();
-    
-    // Загружаем данные
-    const success = await loadServicesData();
-    console.log('Данные загружены успешно:', success, 'Данные:', servicesData);
-    
-    if (success && servicesData.length > 0) {
-        // Рендерим фильтры и услуги
-        renderFilters();
-        renderFilteredServices();
-        console.log('Услуги отрендерены');
-    } else {
-        // Показываем сообщение об ошибке
-        showErrorMessage();
-        console.error('Не удалось загрузить данные или данные пустые');
-    }
-    
-    // Добавляем обработчик для формы заказа
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
-        orderForm.addEventListener('submit', function(event) {
-            submitOrderForm(event);
-        });
-    }
-});
-
-// УДАЛИТЕ все остальные обработчики DOMContentLoaded из кода!
-
-// ==============================================================
-
-// Функция для создания карточки услуги
-function createServiceCard(service) {
-    return `
-        <div class="card">
-            <div class="img-holder">
-                <img src="${service.image}" alt="${service.name}">
-            </div>
-            <h3>${service.name}</h3>
-            <p class="descryption">${service.description}</p>
-            <hr>
-            <p class="price">${service.price}</p>
-            <div class="center">
-                <button class="order" onclick="openOrderForm('${service.name}', '${service.price}')">Заказать</button>
-            </div>
-        </div>
-    `;
-}
-
-// Функция для создания секции с услугами
-function createServiceSection(sectionData) {
-    // Сортируем услуги в алфавитном порядке по названию
-    const sortedServices = sectionData.services.sort((a, b) => 
-        a.name.localeCompare(b.name, 'ru')
-    );
-    
-    const servicesHTML = sortedServices.map(service => 
-        createServiceCard(service)
-    ).join('');
-    
-    return `
-        <section id="${sectionData.section}">
-            <h1>${sectionData.title}</h1>
-            <div class="services">
-                ${servicesHTML}
-            </div>
-        </section>
-    `;
-}
-
-// Функция для рендеринга всех секций на странице
-function renderServices() {
-    const mainElement = document.querySelector('main');
-    
-    const allSectionsHTML = servicesData.map(sectionData => 
-        createServiceSection(sectionData)
-    ).join('');
-    
-    mainElement.innerHTML = allSectionsHTML;
-}
-
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    renderServices();
-});
-
-
 // Глобальные переменные для фильтров
 let currentFilters = {
     category: 'all',
@@ -242,11 +153,6 @@ let currentFilters = {
     sort: 'name'
 };
 
-// Функция для извлечения числовой цены из строки
-function extractPrice(priceString) {
-    const priceMatch = priceString.match(/(\d+[\s\d]*)/);
-    return priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : 0;
-}
 
 // Функция для применения фильтров
 function applyFilters() {
@@ -321,43 +227,6 @@ function filterServices() {
     return filteredData;
 }
 
-// Функция для создания карточки услуги (обновленная)
-function createServiceCard(service) {
-    return `
-        <div class="card" data-category="${service.section}" data-price="${extractPrice(service.price)}">
-            <div class="img-holder">
-                <img src="${service.image}" alt="${service.name}" onerror="this.src='img/services/defence_template.jpg'">
-            </div>
-            <h3>${service.name}</h3>
-            <p class="descryption">${service.description}</p>
-            <hr>
-            <p class="price">${service.price}</p>
-            <div class="center">
-                <button class="order" onclick="openOrderForm('${service.name.replace(/'/g, "\\'")}', '${service.price.replace(/'/g, "\\'")}')">Заказать</button>
-            </div>
-        </div>
-    `;
-}
-
-// Функция для создания секции с услугами (обновленная)
-function createServiceSection(sectionData) {
-    if (sectionData.services.length === 0) {
-        return ''; // Не показываем секции без услуг
-    }
-    
-    const servicesHTML = sectionData.services.map(service => 
-        createServiceCard(service)
-    ).join('');
-    
-    return `
-        <section id="${sectionData.section}" class="service-section">
-            <h1>${sectionData.title}</h1>
-            <div class="services">
-                ${servicesHTML}
-            </div>
-        </section>
-    `;
-}
 
 // Функция для отображения сообщения об отсутствии результатов
 function showNoResultsMessage() {
@@ -413,6 +282,69 @@ function resetFilters() {
     renderFilteredServices();
 }
 
+// ======================================== Создание карточек ========================================
+
+// Функция для создания секции с услугами
+function createServiceSection(sectionData) {
+    if (sectionData.services.length === 0) {
+        return ''; // Не показываем секции без услуг
+    }
+    
+    const servicesHTML = sectionData.services.map(service => 
+        createServiceCard(service)
+    ).join('');
+    
+    return `
+        <section id="${sectionData.section}" class="service-section">
+            <h1>${sectionData.title}</h1>
+            <div class="services">
+                ${servicesHTML}
+            </div>
+        </section>
+    `;
+}
+
+// Функция для создания карточки услуги
+function createServiceCard(service) {
+    return `
+        <div class="card" data-category="${service.section}" data-price="${extractPrice(service.price)}">
+            <div class="img-holder">
+                <img src="${service.image}" alt="${service.name}" onerror="this.src='img/services/defence_template.jpg'">
+            </div>
+            <h3>${service.name}</h3>
+            <p class="descryption">${service.description}</p>
+            <hr>
+            <p class="price">${service.price}</p>
+            <div class="center">
+                <button class="order" onclick="openOrderForm('${service.name.replace(/'/g, "\\'")}', '${service.price.replace(/'/g, "\\'")}')">Заказать</button>
+            </div>
+        </div>
+    `;
+}
+
+
+// Функция для рендеринга всех секций на странице
+function renderServices() {
+    const mainElement = document.querySelector('main');
+    
+    const allSectionsHTML = servicesData.map(sectionData => 
+        createServiceSection(sectionData)
+    ).join('');
+    
+    mainElement.innerHTML = allSectionsHTML;
+}
+
+
+// Функция для извлечения числовой цены из строки
+function extractPrice(priceString) {
+    const priceMatch = priceString.match(/(\d+[\s\d]*)/);
+    return priceMatch ? parseInt(priceMatch[0].replace(/\s/g, '')) : 0;
+}
+
+
+
+// ======================================== Корзина ========================================
+
 // Глобальная переменная для хранения товаров в корзине
 let cart = [];
 
@@ -438,6 +370,9 @@ function addToCart(name, price) {
             quantity: 1
         });
     }
+
+    // Сохраняем в localStorage
+    saveCartToStorage();
     
     // Обновляем отображение корзины
     updateCartDisplay();
@@ -449,6 +384,7 @@ function addToCart(name, price) {
 // Функция удаления товара из корзины
 function removeFromCart(index) {
     cart.splice(index, 1);
+    saveCartToStorage();
     updateCartDisplay();
 }
 
@@ -538,6 +474,8 @@ function checkoutFromCart() {
     // Открываем форму заказа
     openOrderFormFromCart(servicesText);
 }
+
+// ======================================== Форма для заказа ========================================
 
 // Функция открытия формы заказа с предзаполненным описанием
 function openOrderFormFromCart(servicesText) {
@@ -645,17 +583,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// ===================================================================================================================
-
-// Обработчик отправки формы
-document.addEventListener('DOMContentLoaded', function() {
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
-        orderForm.addEventListener('submit', function(event) {
-            submitOrderForm(event);
-        });
-    }
-});
 
 // Функция закрытия модального окна и отправки формы
 function closeOfferModalAndSubmit() {
@@ -735,11 +662,10 @@ function actuallySubmitOrderForm() {
     closeOrderForm();
     
     // Очищаем корзину
+    clearCartFromStorage();
     cart = [];
     updateCartDisplay();
 }
-
-
 
 // Обновленная функция для обновления формы заказа из корзины
 function updateOrderFormFromCart() {
@@ -756,6 +682,8 @@ function updateOrderFormFromCart() {
         document.getElementById('selectedPrice').textContent = cart.length === 1 ? cart[0].price : 'Рассчитывается индивидуально';
     }
 }
+
+// ======================================== Проверка акций ========================================
 
 // Функция для проверки предложений и поиска недостающих услуг
 function checkOffers(cartItems) {
@@ -956,3 +884,72 @@ window.onclick = function(event) {
         closeOfferModal();
     }
 }
+
+// ======================================== Сохранение данных локально ========================================
+
+// Функция для сохранения корзины в localStorage
+function saveCartToStorage() {
+    localStorage.setItem('securityServicesCart', JSON.stringify(cart));
+}
+
+// Функция для загрузки корзины из localStorage
+function loadCartFromStorage() {
+    const savedCart = localStorage.getItem('securityServicesCart');
+    if (savedCart) {
+        try {
+            cart = JSON.parse(savedCart);
+            // Проверяем, что загруженные данные имеют правильную структуру
+            if (!Array.isArray(cart)) {
+                cart = [];
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке корзины из localStorage:', error);
+            cart = [];
+        }
+    }
+    updateCartDisplay();
+}
+
+// Функция для очистки корзины в localStorage
+function clearCartFromStorage() {
+    localStorage.removeItem('securityServicesCart');
+}
+
+// ======================================== DOM ========================================
+
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('DOM загружен, начинаем инициализацию...');
+    
+    // Загружаем корзину из localStorage
+    loadCartFromStorage();
+    console.log('Корзина загружена:', cart);
+
+    // Показываем индикатор загрузки
+    showLoadingIndicator();
+
+    // Инициализация услуг
+    renderServices();
+    
+    // Загружаем данные
+    const success = await loadServicesData();
+    console.log('Данные загружены успешно:', success, 'Данные:', servicesData);
+
+    if (success && servicesData.length > 0) {
+        // Рендерим фильтры и услуги
+        renderFilters();
+        renderFilteredServices();
+        console.log('Услуги отрендерены');
+    } else {
+        // Показываем сообщение об ошибке
+        showErrorMessage();
+        console.error('Не удалось загрузить данные или данные пустые');
+    }
+
+    // Добавляем обработчик для формы заказа
+    const orderForm = document.getElementById('orderForm');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(event) {
+            submitOrderForm(event);
+        });
+    }
+});
