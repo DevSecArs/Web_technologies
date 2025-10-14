@@ -1,6 +1,8 @@
 function show_hide(id) {
-    var object = document.getElementById(id);
-    if (object.style.display === "none") {
-        object.style.display = "flex";
-    } else {object.style.display = "none";}
-}
+            const el = document.getElementById(id);
+            if (el.style.display === "none" || el.style.display === "") {
+                el.style.display = "flex";
+            } else {
+                el.style.display = "none";
+            }
+        }
