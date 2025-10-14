@@ -10,8 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeEventListeners() {
     // Закрытие модальных окон при клике вне области
     window.addEventListener('click', function(event) {
+        const detailsModal = document.getElementById('orderDetailsModal');
         const editModal = document.getElementById('editOrderModal');
+        
+        if (event.target === detailsModal) {
+            closeOrderDetails();
+        }
         if (event.target === editModal) {
+            closeEditModal();
+        }
+    });
+
+    // Закрытие по ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeOrderDetails();
             closeEditModal();
         }
     });
@@ -32,7 +45,7 @@ async function loadOrders() {
         if (allOrders.length === 0) {
             showNoOrdersMessage();
         } else {
-            renderOrders(allOrders);
+            renderOrdersTable(allOrders);
         }
         
     } catch (error) {
@@ -41,86 +54,184 @@ async function loadOrders() {
     }
 }
 
-function renderOrders(orders) {
+function renderOrdersTable(orders) {
     const mainElement = document.querySelector('main');
     
-    const ordersHTML = `
+    const tableHTML = `
         <div class="history-container">
             <h1 class="page-title">История заказов</h1>
-            <div class="orders-list">
-                ${orders.map(order => createOrderCard(order)).join('')}
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Клиент</th>
+                            <th>Контакты</th>
+                            <th>Компания</th>
+                            <th>Стоимость</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orders.map(order => createTableRow(order)).join('')}
+                    </tbody>
+                </table>
             </div>
         </div>
     `;
     
-    mainElement.innerHTML = ordersHTML;
+    mainElement.innerHTML = tableHTML;
 }
 
-function createOrderCard(order) {
+function createTableRow(order) {
+    const orderDate = new Date(order.created_at).toLocaleString('ru-RU');
+    const shortDate = new Date(order.created_at).toLocaleDateString('ru-RU');
+    
+    return `
+        <tr data-order-id="${order.id}">
+            <td>
+                <div class="order-id">#${order.id}</div>
+            </td>
+            <td>
+                <div class="order-date" title="${orderDate}">${shortDate}</div>
+            </td>
+            <td>
+                <div class="customer-name">${escapeHtml(order.customer_name)}</div>
+            </td>
+            <td>
+                <div class="customer-contact">
+                    <div>${escapeHtml(order.customer_email)}</div>
+                    <div>${escapeHtml(order.customer_phone)}</div>
+                </div>
+            </td>
+            <td>
+                <div>${order.company ? escapeHtml(order.company) : '-'}</div>
+            </td>
+            <td>
+                <div>${order.total_price ? escapeHtml(order.total_price) : 'Не указана'}</div>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn btn-details" onclick="openOrderDetails(${order.id})">
+                        📋 Подробнее
+                    </button>
+                    <button class="btn btn-edit" onclick="openEditModal(${order.id})">
+                        ✏️
+                    </button>
+                    <button class="btn btn-delete" onclick="deleteOrder(${order.id})">
+                        🗑️
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function openOrderDetails(orderId) {
+    const order = allOrders.find(o => o.id === orderId);
+    if (!order) return;
+    
+    // Создаем модальное окно если его нет
+    let modal = document.getElementById('orderDetailsModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'orderDetailsModal';
+        modal.className = 'details-modal';
+        document.body.appendChild(modal);
+    }
+    
+    // Заполняем содержимое
+    modal.innerHTML = `
+        <div class="details-modal-content">
+            ${createOrderDetailsContent(order)}
+        </div>
+    `;
+    
+    // Показываем модальное окно
+    modal.classList.add('active');
+    
+    // Блокируем прокрутку body
+    document.body.style.overflow = 'hidden';
+}
+
+function createOrderDetailsContent(order) {
     const orderDate = new Date(order.created_at).toLocaleString('ru-RU');
     
     return `
-        <div class="order-card" data-order-id="${order.id}">
-            <div class="order-header">
-                <div>
-                    <div class="order-id">Заказ #${order.id}</div>
-                    <div class="order-date">${orderDate}</div>
+        <div class="details-header">
+            <h3 class="details-title">Детали заказа #${order.id}</h3>
+            <button class="btn-close-details" onclick="closeOrderDetails()">×</button>
+        </div>
+        <div class="details-content">
+            <div class="details-section">
+                <h3>Информация о клиенте</h3>
+                <div class="info-item">
+                    <span class="info-label">Имя:</span>
+                    <span class="info-value">${escapeHtml(order.customer_name)}</span>
                 </div>
-                <div class="order-actions">
-                    <button class="btn btn-edit" onclick="openEditModal(${order.id})">
-                        ✏️ Редактировать
-                    </button>
-                    <button class="btn btn-delete" onclick="deleteOrder(${order.id})">
-                        🗑️ Удалить
-                    </button>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">${escapeHtml(order.customer_email)}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Телефон:</span>
+                    <span class="info-value">${escapeHtml(order.customer_phone)}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Компания:</span>
+                    <span class="info-value">${order.company ? escapeHtml(order.company) : 'Не указана'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Сотрудников:</span>
+                    <span class="info-value">${order.employees ? escapeHtml(order.employees) : 'Не указано'}</span>
                 </div>
             </div>
             
-            <div class="order-content">
-                <div class="customer-info">
-                    <div class="info-section">
-                        <h3>Информация о клиенте</h3>
-                        <div class="info-item">
-                            <span class="info-label">Имя:</span>
-                            <span class="info-value">${escapeHtml(order.customer_name)}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Email:</span>
-                            <span class="info-value">${escapeHtml(order.customer_email)}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Телефон:</span>
-                            <span class="info-value">${escapeHtml(order.customer_phone)}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Компания:</span>
-                            <span class="info-value">${order.company ? escapeHtml(order.company) : 'Не указана'}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Сотрудников:</span>
-                            <span class="info-value">${order.employees ? escapeHtml(order.employees) : 'Не указано'}</span>
-                        </div>
-                    </div>
+            <div class="details-section">
+                <h3>Детали заказа</h3>
+                <div class="info-item">
+                    <span class="info-label">Дата создания:</span>
+                    <span class="info-value">${orderDate}</span>
                 </div>
-                
-                <div class="order-details">
-                    <div class="info-section">
-                        <h3>Детали заказа</h3>
-                        <div class="info-item">
-                            <span class="info-label">Стоимость:</span>
-                            <span class="info-value">${order.total_price ? escapeHtml(order.total_price) : 'Не указана'}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Описание:</span>
-                        </div>
-                        <div class="description-box">
-                            ${escapeHtml(order.description).replace(/\n/g, '<br>')}
-                        </div>
-                    </div>
+                <div class="info-item">
+                    <span class="info-label">Стоимость:</span>
+                    <span class="info-value">${order.total_price ? escapeHtml(order.total_price) : 'Не указана'}</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Описание:</span>
+                </div>
+                <div class="description-box">
+                    ${escapeHtml(order.description).replace(/\n/g, '<br>')}
+                </div>
+            </div>
+            
+            <div class="details-actions">
+                <button class="btn btn-full-edit" onclick="openEditModal(${order.id}); closeOrderDetails();">
+                    ✏️ Редактировать заказ
+                </button>
+                <button class="btn btn-full-delete" onclick="deleteOrder(${order.id}); closeOrderDetails();">
+                    🗑️ Удалить заказ
+                </button>
             </div>
         </div>
     `;
+}
+
+function closeOrderDetails() {
+    const modal = document.getElementById('orderDetailsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        // Даем время для анимации перед удалением
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 300);
+    }
+    
+    // Восстанавливаем прокрутку body
+    document.body.style.overflow = '';
 }
 
 function openEditModal(orderId) {
@@ -129,16 +240,15 @@ function openEditModal(orderId) {
     
     currentEditOrderId = orderId;
     
-    // Создаем модальное окно если его нет
     let modal = document.getElementById('editOrderModal');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'editOrderModal';
-        modal.className = 'modal';
+        modal.className = 'edit-modal';
         modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Редактировать заказ #${orderId}</h2>
+            <div class="edit-modal-content">
+                <div class="edit-modal-header">
+                    <h2 class="edit-modal-title">Редактировать заказ #${orderId}</h2>
                     <button class="close">&times;</button>
                 </div>
                 <form id="editOrderForm">
@@ -193,12 +303,11 @@ function openEditModal(orderId) {
         `;
         document.body.appendChild(modal);
         
-        // Добавляем обработчики событий
         modal.querySelector('.close').addEventListener('click', closeEditModal);
         modal.querySelector('#editOrderForm').addEventListener('submit', handleEditFormSubmit);
     }
     
-    // Заполняем форму данными
+    // Заполняем форму
     document.getElementById('editCustomerName').value = order.customer_name;
     document.getElementById('editCustomerEmail').value = order.customer_email;
     document.getElementById('editCustomerPhone').value = order.customer_phone;
@@ -208,16 +317,21 @@ function openEditModal(orderId) {
     document.getElementById('editDescription').value = order.description;
     
     // Показываем модальное окно
-    modal.style.display = 'block';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeEditModal() {
     const modal = document.getElementById('editOrderModal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
     }
     currentEditOrderId = null;
+    document.body.style.overflow = '';
 }
+
+// Остальные функции (deleteOrder, handleEditFormSubmit, showLoading и т.д.) остаются без изменений
+// ... (копируйте их из предыдущей версии)
 
 async function handleEditFormSubmit(event) {
     event.preventDefault();
@@ -253,7 +367,7 @@ async function handleEditFormSubmit(event) {
         if (result.success) {
             showSuccess('Заказ успешно обновлен!');
             closeEditModal();
-            loadOrders(); // Перезагружаем список
+            loadOrders();
         } else {
             throw new Error(result.error || 'Ошибка при обновлении');
         }
@@ -282,7 +396,7 @@ async function deleteOrder(orderId) {
         
         if (result.success) {
             showSuccess('Заказ успешно удален!');
-            loadOrders(); // Перезагружаем список
+            loadOrders();
         } else {
             throw new Error(result.error || 'Ошибка при удалении');
         }
@@ -293,7 +407,9 @@ async function deleteOrder(orderId) {
     }
 }
 
-// Вспомогательные функции
+// Вспомогательные функции (showLoading, showNoOrdersMessage, showError, showSuccess, escapeHtml)
+// ... (копируйте их из предыдущей версии)
+
 function showLoading() {
     const mainElement = document.querySelector('main');
     mainElement.innerHTML = `
@@ -336,16 +452,8 @@ function showError(message) {
 }
 
 function showSuccess(message) {
-    // Создаем временное уведомление об успехе
     const notification = document.createElement('div');
     notification.className = 'success-message';
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1001;
-        max-width: 300px;
-    `;
     notification.innerHTML = `<strong>Успех:</strong> ${message}`;
     
     document.body.appendChild(notification);
