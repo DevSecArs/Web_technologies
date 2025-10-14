@@ -1,0 +1,305 @@
+/* history.css */
+.history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    text-align: center;
+    color: rgb(0,0,55);
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    background: white;
+    border: 2px solid rgb(0,0,55);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.order-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    gap: 25px;
+}
+
+.order-id {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: rgb(0,0,55);
+}
+
+.order-date {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #2980b9;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+.order-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.customer-info, .order-details {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.info-section h3 {
+    color: rgb(0,0,55);
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.info-label {
+    font-weight: bold;
+    min-width: 120px;
+    color: #333;
+}
+
+.info-value {
+    flex: 1;
+    color: #555;
+    line-height: 1.4;
+}
+
+.description-box {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid rgb(0,0,55);
+    line-height: 2;
+}
+
+.no-orders {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.no-orders h2 {
+    color: rgb(0,0,55);
+    margin-bottom: 15px;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: rgb(0,0,55);
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-title {
+    font-size: 1.5em;
+    color: rgb(0,0,55);
+    margin: 0;
+}
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgb(0,0,55);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.btn-save {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #219a52;
+}
+
+.btn-cancel {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #7f8c8d;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .order-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .order-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .history-container {
+        padding: 10px;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+.error-message {
+    background: #ffeaa7;
+    color: #d63031;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #d63031;
+}
+
+.success-message {
+    background: #55efc4;
+    color: #00b894;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #00b894;
+}
