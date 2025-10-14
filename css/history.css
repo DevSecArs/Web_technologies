@@ -561,3 +561,12 @@
         width: 100%;
     }
 }
+
+footer {
+    position: fixed;
+    bottom: 0;
+}
+
+main {
+    margin-bottom: 73px;
+}
